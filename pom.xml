@@ -127,6 +127,11 @@
             <artifactId>r2dbc</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-junit-platform</artifactId>
+            <version>3.3.0</version>
+        </dependency>
     </dependencies>
 
     <build>
