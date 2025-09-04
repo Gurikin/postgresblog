@@ -13,6 +13,11 @@ class UsersController(
 ) {
     @PostMapping("/login")
     fun login(@RequestBody login: LoginDto): Mono<AuthResultDto> {
-        return authService.authenticate(login)
+        return authService.signIn(login)
+    }
+
+    @PostMapping("/signup")
+    fun signup(@RequestBody signUpDto: SignUpDto): Mono<AuthResultDto> {
+        return authService.signUp(signUpDto)
     }
 }
