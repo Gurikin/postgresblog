@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.apache.commons.lang3.builder.ToStringExclude
 import org.gurikin.postgresblog.users.Users
@@ -23,10 +24,8 @@ data class Posts(
     @Column(name = "post_id")
     val postId: Long?,
 
-    @ToStringExclude
-    @ManyToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    val user: Users,
+    @Column(name = "user_id")
+    val userId: Long?,
 
     @Column(name = "create_dttm")
     val createDttm: LocalDateTime,
@@ -35,5 +34,5 @@ data class Posts(
     val title: String,
 
     @Column(name = "content")
-    val contest: String
+    val content: String
 )

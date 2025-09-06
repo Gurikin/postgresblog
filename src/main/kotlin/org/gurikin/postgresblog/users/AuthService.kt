@@ -3,6 +3,7 @@ package org.gurikin.postgresblog.users
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 
@@ -14,6 +15,7 @@ class AuthService(
         private val log = LoggerFactory.getLogger(AuthService::class.java)
     }
 
+    @Transactional(readOnly = true)
     fun signIn(login: LoginDto): Mono<AuthResultDto> {
         return userRepository.findByLogin(login.login)
             .flatMap { ue ->
@@ -35,6 +37,7 @@ class AuthService(
             }
     }
 
+    @Transactional
     fun signUp(signUpDto: SignUpDto): Mono<AuthResultDto> {
         val result = checkIfUserExists(signUpDto)
             .flatMap {

@@ -14,8 +14,13 @@ interface UserRepository : R2dbcRepository<Users, Long> {
 
     @Query(
         """
-        select u from users u where u.login = :login or u.email = :email
+        select * from users u where u.login = :login or u.email = :email
     """
     )
     fun findByLoginOrEmail(login: String, email: String): Mono<Users?>
+
+    @Query("""
+        select * from users u where u.user_id = :userId
+    """)
+    fun findByUserId(userId: Long): Mono<Users?>
 }
