@@ -14,13 +14,13 @@
             <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_ddtm" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP">
+            <column name="created_dttm" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="title" type="varchar(255)">
                 <constraints nullable="false" checkConstraint="CHECK (rank >= 10)"/>
             </column>
-            <column name="post_text" type="text">
+            <column name="content" type="text">
                 <constraints nullable="false" checkConstraint="CHECK (rank >= 100)"/>
             </column>
             <column name="search_vector" type="TSVECTOR"/>
@@ -34,7 +34,7 @@
         <createIndex tableName="posts" indexName="posts_user_idx">
             <column name="user_id"/>
         </createIndex>
-        <sql>CREATE INDEX posts_search_vector_idx ON posts USING gin (to_tsvector('russian', "title" || "post_text"))</sql>
+        <sql>CREATE INDEX posts_search_vector_idx ON posts USING gin (to_tsvector('russian', "title" || ' ' || "content"))</sql>
         <rollback>
             <dropTable tableName="posts"/>
         </rollback>
