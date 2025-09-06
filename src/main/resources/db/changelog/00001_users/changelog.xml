@@ -18,6 +18,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint tableName="users" columnNames="login"/>
+        <addUniqueConstraint tableName="users" columnNames="email"/>
         <rollback>
             <dropTable tableName="users"/>
         </rollback>
