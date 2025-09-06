@@ -2,11 +2,11 @@ spring:
   application:
     name: postgresblog
   liquibase:
-    url: ${DB_URL:jdbc:postgresql://localhost:35432/postgres}
+    url: ${LIQUIBASE_DB_URL:jdbc:postgresql://localhost:35432/postgres}
     user: ${DB_USER:postgres}
     password: ${DB_PASS:postgres}
     change-log: classpath:/db/changelog/db.changelog-master.xml
-    default-schema: postgres_blog
+    default-schema: ${DEFAULT_SCHEMA:postgres_blog}
   r2dbc:
     url: ${DB_URL:r2dbc:postgresql://localhost:35432/postgres?schema=postgres_blog}
     username: ${DB_USER:postgres}

@@ -14,7 +14,7 @@
             <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_dttm" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP">
+            <column name="create_dttm" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="title" type="varchar(255)">
