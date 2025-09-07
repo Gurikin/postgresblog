@@ -1,0 +1,55 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="create-tags-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="tags"/>
+            </not>
+        </preConditions>
+        <createTable tableName="tags">
+            <column name="tag_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="code" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="tags" indexName="tags_code_idx">
+            <column name="code"/>
+        </createIndex>
+        <addUniqueConstraint tableName="tags" columnNames="code"/>
+        <rollback>
+            <dropTable tableName="tags"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="create-posts_tags-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="posts_tags"/>
+            </not>
+        </preConditions>
+        <createTable tableName="posts_tags">
+            <column name="post_id" type="bigint"/>
+            <column name="tag_id" type="bigint"/>
+        </createTable>
+        <sql>
+            CREATE INDEX posts_tags_post_idx ON posts_tags USING HASH ("post_id")
+        </sql>
+        <sql>
+            CREATE INDEX posts_tags_tag_idx ON posts_tags USING HASH ("tag_id")
+        </sql>
+        <addUniqueConstraint tableName="posts_tags" columnNames="post_id,tag_id"/>
+        <addForeignKeyConstraint baseTableName="posts_tags" baseColumnNames="post_id"
+                                 constraintName="posts_tags_post_id_fk"
+                                 referencedTableName="posts"
+                                 referencedColumnNames="post_id"/>
+        <addForeignKeyConstraint baseTableName="posts_tags" baseColumnNames="tag_id"
+                                 constraintName="posts_tags_tag_id_fk"
+                                 referencedTableName="tags"
+                                 referencedColumnNames="tag_id"/>
+        <rollback>
+            <dropTable tableName="posts_tags"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
