@@ -25,7 +25,7 @@ class PostService(
 
     @Transactional(readOnly = true)
     fun findAllByFullTextSearch(searchText: List<String>): Mono<List<PostResponseDto?>> {
-        val text = searchText.joinToString(" ")
+        val text = searchText.joinToString(" & ")
         log.info("Fulltext search by {}", text)
         return postRepository.findAllBySearchVector(text)
             .map {

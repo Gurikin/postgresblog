@@ -20,6 +20,6 @@ logging:
     name: logs/blog.log
 
   level:
-    root: debug
+    root: info
     org.gurikin: debug
-    org.postgresql: trace
+    org.postgresql: info
