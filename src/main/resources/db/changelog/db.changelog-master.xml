@@ -6,4 +6,5 @@
     <include file="00001_users/changelog.xml" relativeToChangelogFile="true"/>
     <include file="00002_posts/changelog.xml" relativeToChangelogFile="true"/>
     <include file="00003_tags/changelog.xml" relativeToChangelogFile="true"/>
+    <include file="00004_audit_log/changelog.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
