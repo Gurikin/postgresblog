@@ -1,5 +1,6 @@
 package org.gurikin.postgresblog.posts
 
+import io.r2dbc.spi.ConnectionFactory
 import org.gurikin.postgresblog.users.UserNotFoundException
 import org.gurikin.postgresblog.users.UserRepository
 import org.slf4j.LoggerFactory
@@ -15,35 +16,36 @@ import java.time.LocalDateTime
 class PostService(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
-    private val postEntityTemplate: R2dbcEntityTemplate
+    private val postEntityTemplate: R2dbcEntityTemplate,
+    private val connectionFactory: ConnectionFactory,
 ) {
     companion object {
         private val log = LoggerFactory.getLogger(PostService::class.java)
     }
 
     @Transactional(readOnly = true)
+    fun findAllByFullTextSearch(searchText: List<String>): Mono<List<PostResponseDto?>> {
+        val text = searchText.joinToString(" ")
+        log.info("Fulltext search by {}", text)
+        return postRepository.findAllBySearchVector(text)
+            .map {
+                log.info("Map {} to PostResponseDto", it)
+                it.toPostResponseDto()
+            }
+            .onErrorResume { error ->
+                log.error("Error fulltext search: {}", error.message, error)
+                Mono.error(error)
+            }
+            .collectList()
+
+    }
+
+    @Transactional(readOnly = true)
     fun findAllByUser(userId: Long): Mono<MutableList<PostResponseDto?>> {
-        // val list = mutableListOf<PostResponseDto?>()
-        // return postEntityTemplate.select(Posts::class.java)
-        //     .from("posts")
-        //     .matching(Query.query(where("user_id").`is`(userId)))
-        //     .all()
         val list = mutableListOf<PostResponseDto?>()
         return postEntityTemplate.select(Query.query(where("user_id").`is`(userId)), Posts::class.java)
             .all { list.add(it.toPostResponseDto()) }
             .map { list }
-
-        // val list = mutableListOf<PostResponseDto?>()
-        // return postRepository.findAllByUserId(userId)
-        //     .map { post ->
-        //         log.info("Mapping of posts: {} to PostResponseDto", post)
-        //         list.add(post?.toPostResponseDto())
-        //     }
-        //     .map { list }
-        //     .onErrorResume { error ->
-        //         log.error(error.message, error)
-        //         Mono.error(error)
-        //     }
     }
 
     @Transactional
@@ -82,7 +84,7 @@ class PostService(
                         title = postRequestDto.title,
                         content = postRequestDto.content,
                         createDttm = LocalDateTime.now(),
-                        userId = postRequestDto.authorId
+                        userId = userEntity?.userId
                     )
                 ).map {
                     it.toPostResponseDto()

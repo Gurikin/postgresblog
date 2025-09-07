@@ -16,6 +16,10 @@ spring:
       initial-size: 10
       max-size: 20
 logging:
+  file:
+    name: logs/blog.log
+
   level:
-    root: info
+    root: debug
     org.gurikin: debug
+    org.postgresql: trace

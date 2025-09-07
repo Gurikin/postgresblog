@@ -23,7 +23,6 @@
             <column name="content" type="text">
                 <constraints nullable="false" checkConstraint="CHECK (rank >= 100)"/>
             </column>
-            <column name="search_vector" type="TSVECTOR"/>
         </createTable>
         <addForeignKeyConstraint
                 baseTableName="posts"
@@ -34,7 +33,12 @@
         <createIndex tableName="posts" indexName="posts_user_idx">
             <column name="user_id"/>
         </createIndex>
-        <sql>CREATE INDEX posts_search_vector_idx ON posts USING gin (to_tsvector('russian', "title" || ' ' || "content"))</sql>
+        <sql>
+            ALTER TABLE posts
+                ADD COLUMN search_vector tsvector
+                    GENERATED ALWAYS AS (to_tsvector('english', title || ' ' || content)) STORED;
+        </sql>
+        <sql>CREATE INDEX posts_search_vector_idx ON posts USING gin (search_vector)</sql>
         <rollback>
             <dropTable tableName="posts"/>
         </rollback>
