@@ -1,0 +1,30 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="create-likes-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="likes"/>
+            </not>
+        </preConditions>
+        <createTable tableName="likes">
+            <column name="user_id" type="bigint"/>
+            <column name="post_id" type="bigint"/>
+        </createTable>
+        <sql>
+            CREATE INDEX likes_post_idx ON likes USING HASH ("post_id")
+        </sql>
+        <addUniqueConstraint tableName="likes" columnNames="user_id,post_id"/>
+        <addForeignKeyConstraint baseTableName="likes" baseColumnNames="user_id"
+                                 constraintName="likes_user_id_fk"
+                                 referencedTableName="users"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="likes" baseColumnNames="post_id"
+                                 constraintName="likes_post_id_fk"
+                                 referencedTableName="posts"
+                                 referencedColumnNames="post_id"/>
+        <rollback>
+            <dropTable tableName="likes"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
