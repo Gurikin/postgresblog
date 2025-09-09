@@ -9,4 +9,5 @@
     <include file="00004_audit_log/changelog.xml" relativeToChangelogFile="true"/>
     <include file="00005_comments/changelog.xml" relativeToChangelogFile="true"/>
     <include file="00006_likes/changelog.xml" relativeToChangelogFile="true"/>
+    <include file="00007_fixtures/changelog.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

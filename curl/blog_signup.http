@@ -1,0 +1,17 @@
+###
+POST http://localhost:8080/user/signup
+Content-Type: application/json
+
+{
+  "login": "hermi",
+  "email": "hermi@mail.ru",
+  "password": ""
+}
+
+<> 2025-09-09T090448.200.json
+<> 2025-09-09T090439.200.json
+<> 2025-09-09T090406.200.json
+<> 2025-09-09T084820.200.json
+<> 2025-09-07T095107.200.json
+<> 2025-09-07T094012.200.json
+<> 2025-09-04T232135.400.json
