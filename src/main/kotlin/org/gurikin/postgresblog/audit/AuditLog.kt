@@ -8,15 +8,15 @@ import java.time.LocalDateTime
 @Table(name = "audit_log")
 data class AuditLog(
     @Column(name = "operation")
-    val operation: OperationType,
+    val operation: Char,
     @Column(name = "create_dttm")
-    val createDttm: LocalDateTime,
+    val createdDttm: LocalDateTime,
     @Column(name = "table_name")
     val tableName: String,
     @ColumnTransformer(write = "?::jsonb")
     @Column(name = "old_value")
-    val oldValue: String,
+    val oldValue: String?,
     @ColumnTransformer(write = "?::jsonb")
     @Column(name = "new_value")
-    val newValue: String
+    val newValue: String?
 )

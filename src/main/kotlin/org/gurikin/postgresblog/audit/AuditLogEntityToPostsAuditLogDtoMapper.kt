@@ -11,12 +11,14 @@ class AuditLogEntityToPostsAuditLogDtoMapper(
     private val objectMapper: ObjectMapper
 ) {
     fun map(auditLog: AuditLog): PostsAuditLogDto {
+        val oldValue = if (auditLog.oldValue == null) null else objectMapper.readValue<Posts>(auditLog.oldValue).toPostResponseDto()
+        val newValue = if (auditLog.newValue == null) null else objectMapper.readValue<Posts>(auditLog.newValue).toPostResponseDto()
         return PostsAuditLogDto(
-            operation = auditLog.operation,
-            logTime = auditLog.createDttm,
+            operation = OperationType.findByLetter(auditLog.operation),
+            logTime = auditLog.createdDttm,
             tableName = auditLog.tableName,
-            oldValue = objectMapper.readValue<Posts>(auditLog.oldValue).toPostResponseDto(),
-            newValue = objectMapper.readValue<Posts>(auditLog.newValue).toPostResponseDto(),
+            oldValue = oldValue,
+            newValue = newValue,
         )
     }
 }

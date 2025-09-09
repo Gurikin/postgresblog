@@ -7,7 +7,9 @@ enum class OperationType(
     INSERT('I'),
     UPDATE('U');
 
-    fun findByLetter(char: Char): OperationType {
-        return entries.stream().filter { it.code == char }.findFirst().orElseThrow()
+    companion object {
+        fun findByLetter(char: Char): OperationType {
+            return entries.stream().filter { it.code == char }.findFirst().orElseThrow()
+        }
     }
 }

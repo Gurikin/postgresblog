@@ -8,9 +8,9 @@ interface AuditLogRepository : R2dbcRepository<AuditLog, Long> {
     @Query(
         """
         SELECT *
-            FROM audit_log
-            WHERE (old_value::json->'post_id' = :postId) OR (new_value::json->'post_id' = :postId)
+        FROM audit_log
+        WHERE (old_values->>'post_id' = :postId) OR (new_values->>'post_id' = :postId);
     """
     )
-    fun findAllByPostId(postId: Long): Flux<AuditLog>
+    fun findAllByPostId(postId: String): Flux<AuditLog>
 }

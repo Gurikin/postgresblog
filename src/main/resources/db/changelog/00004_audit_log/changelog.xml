@@ -41,17 +41,17 @@
                 IF
                     (TG_OP = 'DELETE') THEN
                     INSERT INTO postgres_blog.audit_log
-                    SELECT 'D', now(), 'posts', row_to_json(OLD.*), null;
+                    SELECT nextval('postgres_blog.audit_log_audit_log_id_seq'), 'D', now(), 'posts', row_to_json(OLD.*), null;
                     RETURN OLD;
                 ELSIF
                     (TG_OP = 'UPDATE') THEN
                     INSERT INTO postgres_blog.audit_log
-                    SELECT 'U', now(), 'posts', row_to_json(OLD.*), row_to_json(NEW.*);
+                    SELECT nextval('postgres_blog.audit_log_audit_log_id_seq'), 'U', now(), 'posts', row_to_json(OLD.*), row_to_json(NEW.*);
                     RETURN NEW;
                 ELSIF
                     (TG_OP = 'INSERT') THEN
                     INSERT INTO postgres_blog.audit_log
-                    SELECT 'I', now(), 'posts', null, row_to_json(NEW.*);
+                    SELECT nextval('postgres_blog.audit_log_audit_log_id_seq'), 'I', now(), 'posts', null, row_to_json(NEW.*);
                     RETURN NEW;
                 END IF;
                 RETURN NULL;

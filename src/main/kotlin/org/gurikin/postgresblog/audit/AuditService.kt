@@ -10,7 +10,7 @@ class AuditService(
     private val auditLogEntityToPostsAuditLogDtoMapper: AuditLogEntityToPostsAuditLogDtoMapper
 ) : IAuditService<List<PostsAuditLogDto?>> {
     override fun audit(sourceId: Long): Mono<List<PostsAuditLogDto?>> {
-        return auditLogRepository.findAllByPostId(sourceId)
+        return auditLogRepository.findAllByPostId(sourceId.toString())
             .map {
                 log.info("Map {} to PostsAuditLogDto", it)
                 auditLogEntityToPostsAuditLogDtoMapper.map(it)
