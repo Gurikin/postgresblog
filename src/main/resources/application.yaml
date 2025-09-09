@@ -2,4 +2,24 @@ spring:
   application:
     name: postgresblog
   liquibase:
+    url: ${LIQUIBASE_DB_URL:jdbc:postgresql://localhost:35432/postgres}
+    user: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
     change-log: classpath:/db/changelog/db.changelog-master.xml
+    default-schema: ${DEFAULT_SCHEMA:postgres_blog}
+  r2dbc:
+    url: ${DB_URL:r2dbc:postgresql://localhost:35432/postgres?schema=postgres_blog}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 20
+logging:
+  file:
+    name: logs/blog.log
+
+  level:
+    root: info
+    org.gurikin: debug
+    org.postgresql: info

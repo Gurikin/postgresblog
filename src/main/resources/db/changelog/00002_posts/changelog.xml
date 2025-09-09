@@ -1,0 +1,46 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="create-posts-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="posts"/>
+            </not>
+        </preConditions>
+        <createTable tableName="posts">
+            <column name="post_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="create_dttm" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false" checkConstraint="CHECK (rank >= 10)"/>
+            </column>
+            <column name="content" type="text">
+                <constraints nullable="false" checkConstraint="CHECK (rank >= 100)"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="posts"
+                baseColumnNames="user_id"
+                constraintName="posts_user_fk"
+                referencedTableName="users"
+                referencedColumnNames="user_id"/>
+        <createIndex tableName="posts" indexName="posts_user_idx">
+            <column name="user_id"/>
+        </createIndex>
+        <sql>
+            ALTER TABLE posts
+                ADD COLUMN search_vector tsvector
+                    GENERATED ALWAYS AS (to_tsvector('english', title || ' ' || content)) STORED;
+        </sql>
+        <sql>CREATE INDEX posts_search_vector_idx ON posts USING gin (search_vector)</sql>
+        <rollback>
+            <dropTable tableName="posts"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

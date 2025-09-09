@@ -1,0 +1,79 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="create-audit_log-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="audit_log"/>
+            </not>
+        </preConditions>
+        <createTable tableName="audit_log">
+            <column name="audit_log_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="operation" type="varchar(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_dttm" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="table_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="old_values" type="jsonb"/>
+            <column name="new_values" type="jsonb"/>
+        </createTable>
+        <createIndex tableName="audit_log" indexName="audit_log_created_dttm_idx">
+            <column name="created_dttm"/>
+        </createIndex>
+        <rollback>
+            <dropTable tableName="audit_log"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="create-log_posts_change-function" author="biv" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="audit_log"/>
+        </preConditions>
+        <sql splitStatements="false"><![CDATA[
+            CREATE
+                OR REPLACE FUNCTION postgres_blog.log_posts_change()
+                RETURNS TRIGGER AS
+            $$
+            BEGIN
+                IF
+                    (TG_OP = 'DELETE') THEN
+                    INSERT INTO postgres_blog.audit_log
+                    SELECT nextval('postgres_blog.audit_log_audit_log_id_seq'), 'D', now(), 'posts', row_to_json(OLD.*), null;
+                    RETURN OLD;
+                ELSIF
+                    (TG_OP = 'UPDATE') THEN
+                    INSERT INTO postgres_blog.audit_log
+                    SELECT nextval('postgres_blog.audit_log_audit_log_id_seq'), 'U', now(), 'posts', row_to_json(OLD.*), row_to_json(NEW.*);
+                    RETURN NEW;
+                ELSIF
+                    (TG_OP = 'INSERT') THEN
+                    INSERT INTO postgres_blog.audit_log
+                    SELECT nextval('postgres_blog.audit_log_audit_log_id_seq'), 'I', now(), 'posts', null, row_to_json(NEW.*);
+                    RETURN NEW;
+                END IF;
+                RETURN NULL;
+            END;
+            $$
+                LANGUAGE plpgsql;
+            ]]>
+        </sql>
+    </changeSet>
+    <changeSet id="create-change_log-trigger" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="audit_log"/>
+        </preConditions>
+        <sql>
+            drop trigger if exists log_changes on posts;
+            CREATE TRIGGER log_changes
+                AFTER INSERT or
+            UPDATE or
+            DELETE
+            ON posts
+                FOR EACH ROW
+                EXECUTE FUNCTION log_posts_change();
+        </sql>
+    </changeSet>
+</databaseChangeLog>

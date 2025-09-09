@@ -1,0 +1,63 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="fill-users-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+                <tableExists tableName="users"/>
+        </preConditions>
+        <loadUpdateData tableName="users" primaryKey="user_id" file="users.csv" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>truncate table users cascade</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="fill-posts-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="posts"/>
+        </preConditions>
+        <loadUpdateData tableName="posts" primaryKey="post_id" file="posts.csv" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>truncate table posts cascade</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="update-posts-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="posts"/>
+        </preConditions>
+        <loadUpdateData tableName="posts" primaryKey="post_id" file="posts_update.csv" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>truncate table posts cascade</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="fill-likes-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="likes"/>
+        </preConditions>
+        <loadData tableName="likes" file="likes.csv" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>truncate table likes cascade</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="fill-tags-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="tags"/>
+        </preConditions>
+        <loadData tableName="tags" file="tags.csv" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>truncate table tags cascade</sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="fill-posts_tags-table" author="biv">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="posts_tags"/>
+        </preConditions>
+        <loadData tableName="posts_tags" file="posts_tags.csv" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>truncate table posts_tags cascade</sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

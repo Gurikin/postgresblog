@@ -11,8 +11,17 @@
             <column name="user_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="login" type="varchar(100)"/>
-            <column name="email" type="varchar(255)"/>
+            <column name="login" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
+        <addUniqueConstraint tableName="users" columnNames="login"/>
+        <addUniqueConstraint tableName="users" columnNames="email"/>
+        <rollback>
+            <dropTable tableName="users"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

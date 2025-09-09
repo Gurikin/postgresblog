@@ -1,0 +1,10 @@
+###
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{
+  "login": "harry",
+  "password": ""
+}
+
+<> 2025-09-04T222254.200.json
